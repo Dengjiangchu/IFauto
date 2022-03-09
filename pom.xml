@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>xyz.zerostar</groupId>
+    <artifactId>IFauto</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.testng/testng -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.14.2</version>
+            <!--<scope>test</scope>-->
+        </dependency>
+
+        <!-- 报告extentreports依赖-->
+        <!-- https://mvnrepository.com/artifact/com.aventstack/extentreports -->
+        <dependency>
+            <groupId>com.aventstack</groupId>
+            <artifactId>extentreports</artifactId>
+            <version>3.1.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.vimalselvam/testng-extentsreport -->
+        <dependency>
+            <groupId>com.vimalselvam</groupId>
+            <artifactId>testng-extentsreport</artifactId>
+            <version>1.3.1</version>
+        </dependency>
+
+        <!-- retrofit2依赖-->
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>retrofit</artifactId>
+            <version>2.4.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.squareup.retrofit2/converter-gson -->
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>converter-gson</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/logging-interceptor -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>logging-interceptor</artifactId>
+            <version>3.10.0</version>
+        </dependency>
+
+        <!-- 操作excel依赖-->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.15</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.15</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>2.11.0</version>
+        </dependency>
+
+        <!-- lombok-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.18</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- AssertJ-->
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <!-- use 2.9.1 for Java 7 projects -->
+            <version>3.22.0</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <!--扫描替换参数的文件路径-->
+            </resource>
+        </resources>
+
+        <!--配置filter指向的文件，其中${env}为使用profile进行文件控制-->
+        <filters>
+            <filter>src/main/filters/filter-${env}.properties</filter>
+            <!--环境过滤器的配置方式，回头需要在该路径下建立对应文件-->
+        </filters>
+
+        <plugins>
+            <plugin>
+                <!--该插件是解决命令下执行mvn test指定testng xxx.xml 文件 的配置-->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.0</version>
+                <configuration>
+                    <!--为了解决在jenkins maven执行test 报告乱码问题，编码格式设置为UTF-8-->
+                    <argLine>-Dfile.encoding=UTF-8</argLine>
+                    <encoding>UTF-8</encoding>
+                    <!--动态指定执行的xml文件。${project.basedir}项目目录，${xmlFileName}maven文件-->
+                    <suiteXmlFiles>
+                        <!--<suiteXmlFile>${project.basedir}/target/classes/testNg/${xmlFileName}</suiteXmlFile>-->
+
+                        <!--在IEDA上运行maven test命令时，可打开该注释使用完整测试集合-->
+                        <!--<suiteXmlFile>${project.basedir}/target/classes/testNg/api/APICollection-TestSuite.xml</suiteXmlFile>-->
+                    </suiteXmlFiles>
+                </configuration>
+            </plugin>
+
+            <!--maven-compiler-plugin 插件是来对 Java 代码编译的，指定jdk版本-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+
+        <!-- 共享main下面的resources文件-->
+        <testResources>
+            <testResource>
+                <directory>${project.basedir}/src/test/resources</directory>
+            </testResource>
+            <testResource>
+                <directory>${project.basedir}/src/main/resources/testData</directory>
+            </testResource>
+        </testResources>
+    </build>
+
+    <profiles>
+        <!-- 开发环境 -->
+        <profile>
+            <id>dev</id>
+            <properties>
+                <env>dev</env>
+            </properties>
+        </profile>
+
+        <!-- 生产环境 -->
+        <profile>
+            <id>pro</id>
+            <properties>
+                <env>pro</env>
+            </properties>
+        </profile>
+
+        <!-- 测试环境 -->
+        <profile>
+            <id>fat</id>
+            <properties>
+                <env>fat</env>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault><!--默认启用的是fat环境配置-->
+            </activation>
+        </profile>
+    </profiles>
+</project>

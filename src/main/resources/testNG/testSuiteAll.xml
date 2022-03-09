@@ -1,0 +1,13 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="测试全部Suites" verbose="1" preserve-order="true">
+
+    <suite-files>
+        <!-- <suite-file path="testSuites/*"/>-->
+        <suite-file path="testSuites/login-testSuite.xml"/>
+    </suite-files>
+
+    <listeners>
+        <listener class-name="reporter.MyExtentTestNgFormatter"/>
+    </listeners>
+</suite>
